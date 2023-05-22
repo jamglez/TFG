@@ -1,5 +1,5 @@
 # Trabajo Final de Grado
-Inspección visual utilizando Integrated visión de ABB
+Inspección visual utilizando Integrated Vision de ABB
 
 Se trata de mi proyecto final del grado de Ineniería Robótica de la Universidad de Alicante.
 
