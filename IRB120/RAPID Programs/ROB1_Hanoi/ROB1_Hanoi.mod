@@ -1,18 +1,19 @@
 MODULE ROB1_Hanoi
 
     PROC main()
+        END := FALSE;
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
         
         !Cargar el trabajo de la camara
-        CamSetProgramMode CamaraRobot2;
-        CamLoadJob CamaraRobot2,camera_job;
-        CamSetRunMode CamaraRobot2;
+        CamSetProgramMode IntegratedVision1;
+        CamLoadJob IntegratedVision1,camera_job;
+        CamSetRunMode IntegratedVision1;
 
         
         TCP_connect;
 
         WHILE NOT END DO
-            IF resolver=1 THEN
+            IF DO_solve=1 THEN
                 get_initial_state;
                 Hanoi END_STACK;
             ENDIF
@@ -30,7 +31,6 @@ MODULE ROB1_Hanoi
         SocketSend socket1\Str:="Hello server";
         SocketReceive socket1\Str:=received_string;
         connected_to_server:=TRUE;
-        END:=FALSE;
     ENDPROC
 
     !Envia el mensaje de cierre al servidor y cierra el socket
@@ -54,7 +54,7 @@ MODULE ROB1_Hanoi
             MoveJ Offs(grab_point,0,0,(piece_height*n_pieces{stack})+50),fast_speed,fine,vacuum_tool\WObj:=temp_wo;
             MoveL Offs(grab_point,0,0,(piece_height*n_pieces{stack})),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
             WaitTime 0.5;
-            SetDO coger, 1;
+            SetDO DO_ventosa, 1;
             n_pieces{stack} := n_pieces{stack} -1;
             WaitTime 0.5;
             MoveL Offs(grab_point,0,0,(piece_height*n_pieces{stack})+50),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
@@ -62,7 +62,7 @@ MODULE ROB1_Hanoi
             MoveJ Offs(grab_point,0,0,(piece_height*(n_pieces{stack}+1))+50),fast_speed,fine,vacuum_tool\WObj:=temp_wo;
             MoveL Offs(grab_point,0,0,(piece_height*(n_pieces{stack}+1))),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
             WaitTime 0.5;
-            SetDO coger, 0;
+            SetDO DO_ventosa, 0;
             n_pieces{stack} := n_pieces{stack} +1;
             WaitTime 0.5;
             MoveL Offs(grab_point,0,0,(piece_height*(n_pieces{stack}+1))+50),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
@@ -80,20 +80,20 @@ MODULE ROB1_Hanoi
         MoveL passing_point,slow_speed,fine,vacuum_tool\WObj:=wobj0;
 
         IF grab_piece THEN
+            n_pieces{3} := n_pieces{3}-1;
             !Espera la del otro robot que ha cogido la pieza y la ha movido al punto de paso
             SocketReceive socket1\Str:=received_string;
-            SetDO coger, 1;
+            SetDO DO_ventosa, 1;
             WaitTime 0.5;
             SocketSend socket1\Str:="ok";
             WaitTime 0.5;
         ELSE
+            n_pieces{3} := n_pieces{3}+1;
             !Si se pasa la pieza, se avisa al otro robot de que ya está listo
             SocketSend socket1\Str:="Ready";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive socket1\Str:=received_string;
-            SetDO coger, 0;
-            WaitTime 0.5;
-            SetDO coger, 0;
+            SetDO DO_ventosa, 0;
             WaitTime 0.5;
         ENDIF
 
@@ -108,17 +108,17 @@ MODULE ROB1_Hanoi
         SocketSend socket1,\Str:="scan";
 
         !Adquiere imagen
-        CamReqImage CamaraRobot2;
+        CamReqImage IntegratedVision1;
 
         !Posicion del Stack A
-        CamGetParameter CamaraRobot2,"Stack_A.Fixture.X"\NumVar:=stack_A_pos.x;
-        CamGetParameter CamaraRobot2,"Stack_A.Fixture.Y"\NumVar:=stack_A_pos.y;
+        CamGetParameter IntegratedVision1,"Stack_A.Fixture.X"\NumVar:=stack_A_pos.x;
+        CamGetParameter IntegratedVision1,"Stack_A.Fixture.Y"\NumVar:=stack_A_pos.y;
         wo_a.oframe.trans.x:=stack_A_pos.x;
         wo_a.oframe.trans.y:=stack_A_pos.y;
 
         !Posicion del Stack B
-        CamGetParameter CamaraRobot2,"Stack_B.Fixture.X"\NumVar:=stack_B_pos.x;
-        CamGetParameter CamaraRobot2,"Stack_B.Fixture.Y"\NumVar:=stack_B_pos.y;
+        CamGetParameter IntegratedVision1,"Stack_B.Fixture.X"\NumVar:=stack_B_pos.x;
+        CamGetParameter IntegratedVision1,"Stack_B.Fixture.Y"\NumVar:=stack_B_pos.y;
         wo_b.oframe.trans.x:=stack_B_pos.x;
         wo_b.oframe.trans.y:=stack_B_pos.y;
 
@@ -137,8 +137,8 @@ MODULE ROB1_Hanoi
         !Itera todas las piezas
         FOR i FROM MAX_PIECES TO 1 STEP -1 DO
             temp_string:=NumToStr(i,0);
-            CamGetParameter CamaraRobot2,"Circle"+temp_string+".Fixture.X"\NumVar:=temp_pos.x;
-            CamGetParameter CamaraRobot2,"Circle"+temp_string+".Fixture.Y"\NumVar:=temp_pos.y;
+            CamGetParameter IntegratedVision1,"Circle"+temp_string+".Fixture.X"\NumVar:=temp_pos.x;
+            CamGetParameter IntegratedVision1,"Circle"+temp_string+".Fixture.Y"\NumVar:=temp_pos.y;
 
             !Si la pieza se encuentra en la escena del robot 1, 
             IF temp_pos<>[0,0,0] THEN

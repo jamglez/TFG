@@ -6,8 +6,8 @@ MODULE Data
     ENDRECORD
 
     CONST num MAX_PIECES:=5;
-    PERS num END_STACK:=1;
-    PERS num n_pieces{3}:=[1,1,0];
+    PERS num END_STACK:=3;
+    PERS num n_pieces{3}:=[0,0,0];
     VAR num total_pieces;
     VAR num total_moves:=0;
     VAR num stacks{3,MAX_PIECES}:=[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
@@ -17,7 +17,7 @@ MODULE Data
     !Comunicacion TCP/IP
     CONST string server_IP:="172.21.33.222";
     CONST num port_number:=8000;
-    PERS bool connected_to_server:=TRUE;
+    PERS bool connected_to_server:=False;
     VAR string received_string;
     VAR socketdev socket1;
 

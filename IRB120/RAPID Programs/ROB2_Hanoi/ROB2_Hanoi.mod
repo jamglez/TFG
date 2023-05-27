@@ -14,7 +14,7 @@ MODULE ROB2_Hanoi
             SocketReceive client_socket\Str:=received_order;
 
             IF received_order="scan" THEN
-                encode_initial_state;
+                get_initial_state;
 
             ELSEIF received_order="info" THEN
                 SocketSend client_socket\Str:=initial_state;
@@ -42,7 +42,6 @@ MODULE ROB2_Hanoi
 
         SocketReceive client_socket\Str:=received_order;
         SocketSend client_socket\Str:="Conexion establecida";
-
     ENDPROC
 
     !Shutdown the connection
@@ -98,7 +97,7 @@ MODULE ROB2_Hanoi
             SocketSend client_socket\Str:="ok";
             WaitTime 0.5;
         ELSE
-            !Si se pasa la pieza, se avisa al otro robot de que ya est√° listo
+            !Si se pasa la pieza, se avisa al otro robot de que ya est· listo
             SocketSend client_socket\Str:="Ready";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive client_socket\Str:=received_string;
@@ -113,7 +112,7 @@ MODULE ROB2_Hanoi
     !Obtiene el estado inicial, comprobando que piezas se encuentran en la torre C,
     !de modo que el string 'initial_state' contiene las piezas de C. 
     !Por ejemplo, si los discos 2 y 5 estan en C, 'initial_state' seria 02005.
-    PROC encode_initial_state()
+    PROC get_initial_state()
         !Inicializa el estado a nulo y adquiere la imagen
         initial_state:="";
         CamReqImage mycamera;
@@ -124,14 +123,14 @@ MODULE ROB2_Hanoi
         wo_c.oframe.trans.x:=stack_C_pos.x;
         wo_c.oframe.trans.y:=stack_C_pos.y;
 
-        !Obtiene el n√∫mero de piezas que hay en la torre C
+        !Obtiene el n˙mero de piezas que hay en la torre C
         FOR i FROM 1 TO MAX_PIECES DO
             !Posicion de la pieza i
             temp_string:=NumToStr(i,0);
             CamGetParameter mycamera,"Circle"+temp_string+".Fixture.X"\NumVar:=temp_pos.x;
             CamGetParameter mycamera,"Circle"+temp_string+".Fixture.Y"\NumVar:=temp_pos.y;
 
-            !si no es nula, significa que est√° en la torre
+            !si no es nula, significa que est· en la torre
             IF temp_pos<>[0,0,0] THEN
                 pieces_on_C:=pieces_on_C+1;
                 initial_state:=initial_state+temp_string;

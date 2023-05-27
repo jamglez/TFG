@@ -74,22 +74,16 @@ MODULE Hanoi_solver
         IF mv.start=3 SocketSend socket1\Str:="pick";
 
         TEST mv.start
-        CASE 1:
-            move_to_stack 1,TRUE;
-        CASE 2:
-            move_to_stack 2,TRUE;
+        CASE 1,2:
+            move_to_stack mv.start,TRUE;
         CASE 3:
             move_to_pass_point TRUE;
-            n_pieces{3} := n_pieces{3}-1;
         ENDTEST
         TEST mv.end
-        CASE 1:
-            move_to_stack 1,FALSE;
-        CASE 2:
-            move_to_stack 2,FALSE;
+        CASE 1,2:
+            move_to_stack mv.end,FALSE;
         CASE 3:
             move_to_pass_point FALSE;
-            n_pieces{3} := n_pieces{3}+1   ;
         ENDTEST
     ENDPROC
 
