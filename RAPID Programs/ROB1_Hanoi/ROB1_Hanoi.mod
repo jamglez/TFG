@@ -8,10 +8,8 @@ MODULE ROB1_Hanoi
         CamSetProgramMode IntegratedVision1;
         CamLoadJob IntegratedVision1,camera_job;
         CamSetRunMode IntegratedVision1;
-
         
         TCP_connect;
-
         WHILE NOT END DO
             IF DO_solve=1 THEN
                 get_initial_state;
@@ -43,14 +41,14 @@ MODULE ROB1_Hanoi
 
     !Mover brazo a un punto de recogida/dejada en el workobject indicado. 
     !Indicar si recoge (1) o deja la pieza (0)
-    PROC move_to_stack(num stack,bool grap_piece)
+    PROC move_to_stack(num stack,bool grab_piece)
         IF stack = 1 THEN
             temp_wo:=wo_a;
         ELSE
             temp_wo:=wo_b;
         ENDIF
 
-        IF grap_piece THEN
+        IF grab_piece THEN
             MoveJ Offs(grab_point,0,0,(piece_height*n_pieces{stack})+50),fast_speed,fine,vacuum_tool\WObj:=temp_wo;
             MoveL Offs(grab_point,0,0,(piece_height*n_pieces{stack})),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
             WaitTime 0.5;
@@ -89,7 +87,7 @@ MODULE ROB1_Hanoi
             WaitTime 0.5;
         ELSE
             n_pieces{3} := n_pieces{3}+1;
-            !Si se pasa la pieza, se avisa al otro robot de que ya est· listo
+            !Si se pasa la pieza, se avisa al otro robot de que ya est√° listo
             SocketSend socket1\Str:="Ready";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive socket1\Str:=received_string;
@@ -142,7 +140,7 @@ MODULE ROB1_Hanoi
 
             !Si la pieza se encuentra en la escena del robot 1, 
             IF temp_pos<>[0,0,0] THEN
-                !Se calcula si esta cerca de la torre A, si es asÌ, est· en A y si no, est· en B
+                !Se calcula si esta cerca de la torre A, si es as√≠, est√° en A y si no, est√° en B
                 IF Distance(temp_pos,stack_A_pos)<50 THEN
                     n_pieces{1}:=n_pieces{1}+1;
                     moves{i}.start:=1;
@@ -157,7 +155,7 @@ MODULE ROB1_Hanoi
             IF temp_num MOD 10=i THEN
                 !Se incrementa el numero de piezas en C
                 n_pieces{3}:=n_pieces{3}+1;
-                !Se establece que esa pieza est· inicialmente en C
+                !Se establece que esa pieza est√° inicialmente en C
                 moves{i}.start:=3;
             ENDIF
             temp_num:=temp_num DIV 10;
