@@ -20,20 +20,20 @@ MODULE Hanoi_solver
     ENDPROC
 
     !Algoritmo de Torres de Hanoi con la variante de que en el estado inicial
-    !no todas las piezas tienen porquÈ estar en la misma torre. 
+    !no todas las piezas tienen porqu√© estar en la misma torre. 
     PROC Hanoi(num end)
 
         initialize_desired_state;
 
-        !La pieza m·s grande se quiere estar en el stack final
+        !La pieza m√°s grande se quiere estar en el stack final
         moves{total_pieces}.end:=end;
 
-        !Mientras no estÈ resuelto
+        !Mientras no est√© resuelto
         WHILE NOT stacks=desired_state DO
 
             !Se calcula el movimiento para cada pieza
             FOR i FROM total_pieces-1 TO 1 STEP -1 DO
-                !Si la pieza i+1 est· ya en el stack donde quiere estar, 
+                !Si la pieza i+1 est√° ya en el stack donde quiere estar, 
                 !la pieza i quiere estar en el mismo stack que la i+1
                 IF moves{i+1}.start=moves{i+1}.end THEN
                     moves{i}.end:=moves{i+1}.end;
@@ -44,12 +44,10 @@ MODULE Hanoi_solver
             ENDFOR
 
             !Se realiza el movimiento:
-            !Mover el menor disco que no quiere estar donde est·
+            !Mover el menor disco que no quiere estar donde est√°
             FOR i FROM 1 TO total_pieces DO
                 IF NOT moves{i}.start=moves{i}.end THEN
                     make_hanoi_move moves{i};
-!                    TPWrite "Movimiento desde: "\Num:=moves{i}.start;
-!                    TPWrite "Hacia: "\Num:=moves{i}.end;
 
                     stacks{moves{i}.start,i}:=0;
                     stacks{moves{i}.end,i}:=i;
@@ -60,7 +58,6 @@ MODULE Hanoi_solver
             ENDFOR
             break:
         ENDWHILE
-        !TPWrite "Movimientos totales: "\Num:=total_moves;
 
     ENDPROC
 
