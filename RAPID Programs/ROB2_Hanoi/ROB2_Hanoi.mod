@@ -1,6 +1,7 @@
 MODULE ROB2_Hanoi
 
     PROC main()
+        
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
         
         !Carga el trabajo de la camara y lo pone en modo de funcionamiento
@@ -56,7 +57,6 @@ MODULE ROB2_Hanoi
     !Indicar si recoge (1) o deja la pieza (0)
     PROC move_to_stack(bool grab_piece)
 
-
         IF grab_piece THEN
             MoveJ Offs(stack_point,0,0,(piece_height*pieces_on_C)+50),fast_speed,fine,vacuum_tool\WObj:=wo_c;
             MoveL Offs(stack_point,0,0,(piece_height*pieces_on_C)),slow_speed,fine,vacuum_tool\WObj:=wo_c;
@@ -72,7 +72,7 @@ MODULE ROB2_Hanoi
             MoveL Offs(stack_point,0,0,(piece_height*(pieces_on_C+1))),slow_speed,fine,vacuum_tool\WObj:=wo_c;
 
             WaitTime 0.5;
-            SetDO ventosa, 0;
+            SetDO DO_ventosa, 0;
             pieces_on_C:=pieces_on_C+1;
             WaitTime 0.5;
 
@@ -92,7 +92,7 @@ MODULE ROB2_Hanoi
         IF grab_piece THEN
             !Espera la del otro robot que ha cogido la pieza y la ha movido al punto de paso
             SocketReceive client_socket\Str:=received_string;
-            SetDO ventosa, 1;
+            SetDO DO_ventosa, 1;
             WaitTime 0.5;
             SocketSend client_socket\Str:="ok";
             WaitTime 0.5;
@@ -101,9 +101,7 @@ MODULE ROB2_Hanoi
             SocketSend client_socket\Str:="Ready";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive client_socket\Str:=received_string;
-            SetDO ventosa, 0;
-            WaitTime 0.5;
-            SetDO ventosa, 0;
+            SetDO DO_ventosa, 0;
             WaitTime 0.5;
         ENDIF
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;

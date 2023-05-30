@@ -2,14 +2,18 @@ MODULE ROB1_Hanoi
 
     PROC main()
         END := FALSE;
+        connected_to_server:=FALSE;
+        n_pieces{3}:=[0,0,0];
+
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
         
         !Cargar el trabajo de la camara
         CamSetProgramMode IntegratedVision1;
         CamLoadJob IntegratedVision1,camera_job;
         CamSetRunMode IntegratedVision1;
-        
+
         TCP_connect;
+
         WHILE NOT END DO
             IF DO_solve=1 THEN
                 get_initial_state;
@@ -66,7 +70,6 @@ MODULE ROB1_Hanoi
             MoveL Offs(grab_point,0,0,(piece_height*(n_pieces{stack}+1))+50),slow_speed,fine,vacuum_tool\WObj:=temp_wo;
         ENDIF
 
-
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
 
     ENDPROC
@@ -83,12 +86,12 @@ MODULE ROB1_Hanoi
             SocketReceive socket1\Str:=received_string;
             SetDO DO_ventosa, 1;
             WaitTime 0.5;
-            SocketSend socket1\Str:="ok";
+            SocketSend socket1\Str:="vacuum_activated";
             WaitTime 0.5;
         ELSE
             n_pieces{3} := n_pieces{3}+1;
-            !Si se pasa la pieza, se avisa al otro robot de que ya est√° listo
-            SocketSend socket1\Str:="Ready";
+            !Si se pasa la pieza, se avisa al otro robot de que ya est· listo
+            SocketSend socket1\Str:="arrived";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive socket1\Str:=received_string;
             SetDO DO_ventosa, 0;
@@ -140,7 +143,7 @@ MODULE ROB1_Hanoi
 
             !Si la pieza se encuentra en la escena del robot 1, 
             IF temp_pos<>[0,0,0] THEN
-                !Se calcula si esta cerca de la torre A, si es as√≠, est√° en A y si no, est√° en B
+                !Se calcula si esta cerca de la torre A, si es asÌ, est· en A y si no, est· en B
                 IF Distance(temp_pos,stack_A_pos)<50 THEN
                     n_pieces{1}:=n_pieces{1}+1;
                     moves{i}.start:=1;
@@ -155,7 +158,7 @@ MODULE ROB1_Hanoi
             IF temp_num MOD 10=i THEN
                 !Se incrementa el numero de piezas en C
                 n_pieces{3}:=n_pieces{3}+1;
-                !Se establece que esa pieza est√° inicialmente en C
+                !Se establece que esa pieza est· inicialmente en C
                 moves{i}.start:=3;
             ENDIF
             temp_num:=temp_num DIV 10;
