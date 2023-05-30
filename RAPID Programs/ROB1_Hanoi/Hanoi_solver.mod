@@ -35,21 +35,19 @@ MODULE Hanoi_solver
             FOR i FROM total_pieces-1 TO 1 STEP -1 DO
                 !Si la pieza i+1 está ya en el stack donde quiere estar, 
                 !la pieza i quiere estar en el mismo stack que la i+1
-                IF moves{i+1}.start=moves{i+1}.end THEN
-                    moves{i}.end:=moves{i+1}.end;
+                IF moves{i+1}.start = moves{i+1}.end THEN
+                    moves{i}.end := moves{i+1}.end;
                     !Si no, la pieza i no quiere estar donde empieza ni donde acaba la i+1
                 ELSE
-                    moves{i}.end:=6-(moves{i+1}.start+moves{i+1}.end);
+                    moves{i}.end := 6-(moves{i+1}.start+moves{i+1}.end);
                 ENDIF
             ENDFOR
 
             !Se realiza el movimiento:
             !Mover el menor disco que no quiere estar donde está
             FOR i FROM 1 TO total_pieces DO
-                IF NOT moves{i}.start=moves{i}.end THEN
+                IF NOT moves{i}.start = moves{i}.end THEN
                     make_hanoi_move moves{i};
-!                    TPWrite "Movimiento desde: "\Num:=moves{i}.start;
-!                    TPWrite "Hacia: "\Num:=moves{i}.end;
 
                     stacks{moves{i}.start,i}:=0;
                     stacks{moves{i}.end,i}:=i;
@@ -60,7 +58,7 @@ MODULE Hanoi_solver
             ENDFOR
             break:
         ENDWHILE
-        !TPWrite "Movimientos totales: "\Num:=total_moves;
+        TPWrite "Movimientos totales: "\Num:=total_moves;
 
     ENDPROC
 
