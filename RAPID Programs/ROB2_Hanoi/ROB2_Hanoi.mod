@@ -1,7 +1,6 @@
 MODULE ROB2_Hanoi
 
     PROC main()
-        
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
         
         !Carga el trabajo de la camara y lo pone en modo de funcionamiento
@@ -43,6 +42,7 @@ MODULE ROB2_Hanoi
 
         SocketReceive client_socket\Str:=received_order;
         SocketSend client_socket\Str:="Conexion establecida";
+
     ENDPROC
 
     !Shutdown the connection
@@ -57,12 +57,13 @@ MODULE ROB2_Hanoi
     !Indicar si recoge (1) o deja la pieza (0)
     PROC move_to_stack(bool grab_piece)
 
+
         IF grab_piece THEN
             MoveJ Offs(stack_point,0,0,(piece_height*pieces_on_C)+50),fast_speed,fine,vacuum_tool\WObj:=wo_c;
             MoveL Offs(stack_point,0,0,(piece_height*pieces_on_C)),slow_speed,fine,vacuum_tool\WObj:=wo_c;
 
             WaitTime 0.5;
-            SetDO ventosa,1;
+            SetDO DO_ventosa,1;
             pieces_on_C:=pieces_on_C-1;
             WaitTime 0.5;
 
@@ -95,11 +96,10 @@ MODULE ROB2_Hanoi
             SetDO DO_ventosa, 1;
             WaitTime 0.5;
             SocketSend client_socket\Str:="ok";
-            WaitTime 0.5;
         ELSE
             !Si se pasa la pieza, se avisa al otro robot de que ya está listo
             SocketSend client_socket\Str:="Ready";
-            !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
+            !Se espera a la orden "ok" indicando que el otro ha activado la DO_ventosa
             SocketReceive client_socket\Str:=received_string;
             SetDO DO_ventosa, 0;
             WaitTime 0.5;
@@ -111,8 +111,7 @@ MODULE ROB2_Hanoi
     !de modo que el string 'initial_state' contiene las piezas de C. 
     !Por ejemplo, si los discos 2 y 5 estan en C, 'initial_state' seria 02005.
     PROC get_initial_state()
-        !Inicializa el estado a nulo y adquiere la imagen
-        initial_state:="";
+
         CamReqImage mycamera;
 
         !Obtiene la posicion de la torre C

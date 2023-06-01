@@ -3,7 +3,7 @@ MODULE ROB1_Hanoi
     PROC main()
         END := FALSE;
         connected_to_server:=FALSE;
-        n_pieces{3}:=[0,0,0];
+        n_pieces:=[0,0,0];
 
         MoveJ HOME,fast_speed,fine,vacuum_tool\WObj:=wobj0;
         
@@ -81,20 +81,20 @@ MODULE ROB1_Hanoi
         MoveL passing_point,slow_speed,fine,vacuum_tool\WObj:=wobj0;
 
         IF grab_piece THEN
-            n_pieces{3} := n_pieces{3}-1;
             !Espera la del otro robot que ha cogido la pieza y la ha movido al punto de paso
             SocketReceive socket1\Str:=received_string;
             SetDO DO_ventosa, 1;
+            n_pieces{3} := n_pieces{3}-1;
             WaitTime 0.5;
             SocketSend socket1\Str:="vacuum_activated";
             WaitTime 0.5;
         ELSE
-            n_pieces{3} := n_pieces{3}+1;
             !Si se pasa la pieza, se avisa al otro robot de que ya está listo
             SocketSend socket1\Str:="arrived";
             !Se espera a la orden "ok" indicando que el otro ha activado la ventosa
             SocketReceive socket1\Str:=received_string;
             SetDO DO_ventosa, 0;
+            n_pieces{3} := n_pieces{3}+1;
             WaitTime 0.5;
         ENDIF
 
