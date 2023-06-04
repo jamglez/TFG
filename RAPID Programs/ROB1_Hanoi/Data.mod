@@ -7,7 +7,7 @@ MODULE Data
 
     CONST num MAX_PIECES:=5;
     PERS num END_STACK:=3;
-    PERS num n_pieces{3}:=[0,2,0];
+    PERS num n_pieces{3}:=[0,0,0];
     VAR num total_pieces;
     VAR num total_moves:=0;
     VAR num stacks{3,MAX_PIECES}:=[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]];
